@@ -1,0 +1,26 @@
+name: "Run commitlint"
+on:
+  pull_request:
+    branches:
+      - sonarqube
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+  push:
+    branches: [ feature/* ]
+
+jobs:
+  run-commitlint:
+    name: Run commitlint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Install Commitlint Dependencies
+      id: dependencies
+      run: npm install @commitlint/config-conventional
+    - name: Lint commit messages
+      id: commitlint
+      uses: wagoid/commitlint-github-action@v4
+      with:
+        configFile: .commitlint.config.js

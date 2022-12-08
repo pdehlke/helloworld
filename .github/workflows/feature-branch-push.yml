@@ -1,0 +1,62 @@
+name: "Feature branch pushed"
+on:
+  push:
+    branches: [ feature/* ]
+
+jobs:
+  verify-feature-build:
+    name: Build Feature Branch
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 8
+      id: checkout
+      uses: actions/setup-java@v3
+      with:
+        cache: maven
+        distribution: corretto
+        java-version: 8
+
+    - name: maven-settings-xml-action
+      uses: whelk-io/maven-settings-xml-action@v20
+      with:
+        output_file: $HOME/.m2/settings.xml
+        repositories: >
+          [
+            {
+              "id": "github-packages",
+              "url": "https://maven.pkg.github.com/aboveproperty/*"
+            }
+          ]
+        servers: '[{
+            "id": "github-packages",
+            "username": "${{ secrets.GH_USERNAME }}",
+            "password": "${{ secrets.GH_PASSWORD }}"
+          }, {
+            "id": "dev-nexus-abvprp",
+            "username": "${{ secrets.NEXUS_USERNAME }}",
+            "password": "${{ secrets.NEXUS_PASSWORD }}"
+          }, {
+            "id": "github",
+            "username": "${{ github.actor }}",
+            "password": "${{ secrets.GITHUB_TOKEN }}"
+          }]'
+        mirrors: >
+          [
+            {
+              "id": "dev-nexus-abvprp",
+              "name": "Above Property Nexus",
+              "mirrorOf": "external:*,!github-packages",
+              "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
+            }
+          ]
+
+    - name: maven package
+      id: package
+      run: mvn --no-transfer-progress clean package -DskipTests=true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
