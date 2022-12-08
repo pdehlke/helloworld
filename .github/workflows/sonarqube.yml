@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build and analyze with sonarqube
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest
 
     steps:
     - name: Setting environment variables.

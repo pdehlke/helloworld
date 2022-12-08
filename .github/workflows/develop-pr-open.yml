@@ -2,13 +2,13 @@ name: "pre-release PR opened"
 on:
   pull_request:
     branches:
-      - sonarqube
+      - master
     types: ['opened', 'edited', 'reopened', 'synchronize']
 
 jobs:
   process-pr-open:
     name: Process New Pull Request
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest
     steps:
     - name: Check out code
       uses: actions/checkout@v2
