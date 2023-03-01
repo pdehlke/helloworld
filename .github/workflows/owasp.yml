@@ -43,39 +43,39 @@ jobs:
         distribution: corretto
         java-version: 8
 
-    - name: Set up maven
-      uses: whelk-io/maven-settings-xml-action@v20
-      with:
-        output_file: $HOME/.m2/settings.xml
-        repositories: >
-          [
-            {
-              "id": "github-packages",
-              "url": "https://maven.pkg.github.com/aboveproperty/*"
-            }
-          ]
-        servers: '[{
-            "id": "github-packages",
-            "username": "${{ secrets.GH_USERNAME }}",
-            "password": "${{ secrets.GH_PASSWORD }}"
-          }, {
-            "id": "dev-nexus-abvprp",
-            "username": "${{ secrets.NEXUS_USERNAME }}",
-            "password": "${{ secrets.NEXUS_PASSWORD }}"
-          }, {
-            "id": "github",
-            "username": "${{ github.actor }}",
-            "password": "${{ secrets.GITHUB_TOKEN }}"
-          }]'
-        mirrors: >
-          [
-            {
-              "id": "dev-nexus-abvprp",
-              "name": "Above Property Nexus",
-              "mirrorOf": "external:*,!github-packages",
-              "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
-            }
-          ]
+    # - name: Set up maven
+    #   uses: whelk-io/maven-settings-xml-action@v20
+    #   with:
+    #     output_file: $HOME/.m2/settings.xml
+    #     repositories: >
+    #       [
+    #         {
+    #           "id": "github-packages",
+    #           "url": "https://maven.pkg.github.com/aboveproperty/*"
+    #         }
+    #       ]
+    #     servers: '[{
+    #         "id": "github-packages",
+    #         "username": "${{ secrets.GH_USERNAME }}",
+    #         "password": "${{ secrets.GH_PASSWORD }}"
+    #       }, {
+    #         "id": "dev-nexus-abvprp",
+    #         "username": "${{ secrets.NEXUS_USERNAME }}",
+    #         "password": "${{ secrets.NEXUS_PASSWORD }}"
+    #       }, {
+    #         "id": "github",
+    #         "username": "${{ github.actor }}",
+    #         "password": "${{ secrets.GITHUB_TOKEN }}"
+    #       }]'
+    #     mirrors: >
+    #       [
+    #         {
+    #           "id": "dev-nexus-abvprp",
+    #           "name": "Above Property Nexus",
+    #           "mirrorOf": "external:*,!github-packages",
+    #           "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
+    #         }
+    #       ]
 
     - name: Check for CVEs
       id: build-pre-release-assets
