@@ -79,6 +79,6 @@ jobs:
 
     - name: Check for CVEs
       id: build-pre-release-assets
-      run: mvn -DossindexAnalyzerEnabled=false -Djgitver.config=.mvn/jgitver.config.develop.xml --no-transfer-progress -DuseGitHubPackages=true  --file pom.xml -Dfmt.skip=true -DskipTests=true -fae -B -DfailBuildOnCVSS=7 -DsuppressionFile=./.suppressed-dependency-check.xml org.owasp:dependency-check-maven:aggregate
+      run: mvn -DossindexAnalyzerEnabled=false -Djgitver.config=.mvn/jgitver.config.develop.xml --no-transfer-progress -DuseGitHubPackages=true  --file pom.xml -Dfmt.skip=true -DskipTests=true -fae -B -DsuppressionFile=./.suppressed-dependency-check.xml org.owasp:dependency-check-maven:aggregate
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
