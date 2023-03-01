@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+    <suppress>
+        <!-- jackson-databind vuln du jour -->
+        <cve>CVE-2020-36518</cve>
+        <!-- drop wizard 2.1.4 dependency watching for fix -->
+        <cve>CVE-2022-25857</cve>
+        <cve>CVE-2021-4277</cve>
+        <cve>CVE-2022-3064</cve>
+        <cve>CVE-2022-38752</cve>
+        <cve>CVE-2022-41854</cve>
+        <cve>CVE-2021-4235</cve>
+        <!-- jackson-databind 2.13.4 -->
+        <cve>CVE-2022-42003</cve>
+		<!-- commons-compress-1.19 -->
+		<cve>CVE-2021-35515</cve>
+		<cve>CVE-2021-35516</cve>
+		<cve>CVE-2021-35517</cve>
+		<cve>CVE-2021-36090</cve>
+    </suppress>
+</suppressions>

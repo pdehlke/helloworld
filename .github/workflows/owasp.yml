@@ -16,9 +16,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
+
+    - name: Tune Runner VM
+        uses: ./.github/actions/tune-runner-vm
+
+    - name: Cache local Maven repository
+        uses: actions/cache@v3
+        timeout-minutes: 5
+        with:
+          path: |
+            ~/.m2/repository/*/*/*
+          key: ${{ runner.os }}-m2-dependencies-owasp-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-dependencies-all-${{ hashFiles('**/pom.xml') }}
+            ${{ runner.os }}-m2-dependencies-core-modules-${{ hashFiles('**/pom.xml') }}
+            ${{ runner.os }}-m2-dependencies-core-modules-
 
     - name: Set up JDK 8
       id: setup-java
