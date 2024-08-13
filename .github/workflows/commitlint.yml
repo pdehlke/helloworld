@@ -4,7 +4,7 @@ on:
     branches: [ 'master', 'main', 'develop' ]
     types: ['opened', 'edited', 'reopened', 'synchronize']
   push:
-    branches: [ feature/* ]
+    branches-ignore: [ 'master', 'main', 'develop' ]
 
 jobs:
   run-commitlint:

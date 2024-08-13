@@ -1,7 +1,7 @@
 name: "Push feature branch"
 on:
   push:
-    branches: [ feature/* ]
+    branches-ignore: [ 'master', 'main', 'develop' ]
 
 jobs:
   verify-feature-build:
