@@ -1,0 +1,38 @@
+# based on https://github.com/pascalgn/automerge-action/tree/v0.13.0#usage
+name: "Merge PR when ready"
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    branches:
+      - develop
+    types:
+      - submitted
+  check_suite:
+    branches:
+      - develop
+    types:
+      - completed
+
+jobs:
+  automerge:
+    name: Automatically Merge Pull Request
+    runs-on: ubuntu-latest
+    steps:
+      - name: automerge
+        if: github.event.review.state == 'approved'
+        uses: pascalgn/automerge-action@v0.14.3
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: ""
+          MERGE_REQUIRED_APPROVALS: 1
