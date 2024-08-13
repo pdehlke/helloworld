@@ -2,7 +2,7 @@ name: "pre-release PR opened"
 on:
   pull_request:
     branches:
-      - master
+      - main
     types: ['opened', 'edited', 'reopened', 'synchronize']
 
 jobs:
@@ -11,30 +11,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
 
+    - name: Tune Runner VM
+      uses: ./.github/actions/tune-runner-vm
+
+    # We expect commits and PR names to follow conventional
+    # commit standards
+    #- name: Install Commitlint Dependencies
+    #  id: install-commitlint-dependencies
+    #  run: npm install @commitlint/config-conventional
+
+    #- name: Lint commit messages
+    #  id: commitlint
+    #  uses: wagoid/commitlint-github-action@v5
+    #  with:
+    #    configFile: .commitlint.config.js
+    #    failOnErrors: false
+
+    #- name: Lint PR name
+    #  id: pr-name-lint
+    #  uses: JulienKode/pull-request-name-linter-action@v0.4.0
+    #  with:
+    #    configuration-path: .commitlint.config.js
+
     - name: Install conventional commit dependencies
       id: install-cc-dependencies
-      run: npm i conventional-changelog-conventionalcommits
+      run: npm i conventional-changelog-conventionalcommits@7.0.2
 
-    - name: Conventional Changelog Action
-      id: changelog
-      uses: TriPSs/conventional-changelog-action@v3.10.0
-      with:
-        config-file-path: ./.changelog.config.js
-        skip-version-file: true
-        skip-commit: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+#    - name: Conventional Changelog Action
+#      id: changelog
+#      uses: TriPSs/conventional-changelog-action@v3.10.0
+#      with:
+#        config-file-path: ./.changelog.config.js
+#        skip-version-file: true
+#        skip-commit: true
+#        github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Set up JDK 8
+    - name: Set up JDK 17
       id: setup-java
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         cache: maven
-        distribution: corretto
-        java-version: 8
+        distribution: zulu
+        java-version: 17
 
     - name: Set up maven
       uses: whelk-io/maven-settings-xml-action@v20
@@ -70,15 +92,46 @@ jobs:
             }
           ]
 
+    - name: Cache local Maven repository
+      uses: actions/cache@v3
+      timeout-minutes: 5
+      with:
+        path: |
+          ~/.m2/repository/*/*/*
+        key: ${{ runner.os }}-m2-dependencies-owasp-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-m2-dependencies-all-${{ hashFiles('**/pom.xml') }}
+          ${{ runner.os }}-m2-dependencies-core-modules-${{ hashFiles('**/pom.xml') }}
+          ${{ runner.os }}-m2-dependencies-core-modules-
+
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v29.0.4
+
+   # - name: Check for copyright
+   #   id: check_boilerplate
+   #  env:
+   #     FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+   #   run: .github/check_boilerplate/verify-boilerplate.sh
+
     - name: Build assets
-      id: build-
-      run: rm -rf package.json package-lock.json node_modules && mvn -Djgitver.config=.mvn/jgitver.config.develop.xml --no-transfer-progress -DuseGitHubPackages=true --file pom.xml -Dfmt.skip=true -B clean package
+      id: build-pre-release-assets
+      run: /bin/rm -rf node_modules package.json package-lock.json && mvn -DretireJsAnalyzerEnabled=false -DossindexAnalyzerEnabled=false -Djgitver.config=.mvn/jgitver.config.develop.xml --no-transfer-progress -DuseGitHubPackages=true --file pom.xml -Dfmt.skip=true -DskipTests=true -fae -B -DfailBuildOnCVSS=7 -DsuppressionFile=./.suppressed-dependency-check.xml clean -Ddependency-check.skip=true org.owasp:dependency-check-maven:10.0.0:aggregate -DnvdApiKey=5a7464a0-a4db-446d-9e74-3c34fbac6b39 -DnvdApiDelay=24000 -DnvdMaxRetryCount=20 package
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Publish Test Report
-      if: ${{ always() }}
-      uses: scacap/action-surefire-report@v1
+    # We should be running tests here.
+
+    - name: Create pre-release package
+      id: pre-release-package
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          target/*.jar
 
   notify:
       name: Notify on Slack

@@ -1,11 +1,10 @@
 name: "Run commitlint"
 on:
   pull_request:
-    branches:
-      - master
+    branches: [ 'master', 'main', 'develop' ]
     types: ['opened', 'edited', 'reopened', 'synchronize']
   push:
-    branches: [ feature/* ]
+    branches-ignore: [ 'master', 'main', 'develop' ]
 
 jobs:
   run-commitlint:
@@ -13,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
     - name: Install Commitlint Dependencies
@@ -21,6 +20,6 @@ jobs:
       run: npm install @commitlint/config-conventional
     - name: Lint commit messages
       id: commitlint
-      uses: wagoid/commitlint-github-action@v4
+      uses: wagoid/commitlint-github-action@v6.0.2
       with:
-        configFile: .commitlint.config.js
+        configFile: .commitlint.config.mjs
