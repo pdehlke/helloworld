@@ -70,16 +70,16 @@ jobs:
           ${{ runner.os }}-m2-dependencies-core-modules-${{ hashFiles('**/pom.xml') }}
           ${{ runner.os }}-m2-dependencies-core-modules-
 
-    #- name: Install Commitlint Dependencies
-    #  id: dependencies
-    #  run: npm install @commitlint/config-conventional
+    - name: Install Commitlint Dependencies
+     id: dependencies
+     run: npm install @commitlint/config-conventional
 
-    #- name: Lint commit messages
-    #  id: commitlint
-    #  uses: wagoid/commitlint-github-action@v5
-    #  with:
-    #    configFile: .commitlint.config.js
-    #    failOnErrors: false
+    - name: Lint commit messages
+     id: commitlint
+     uses: wagoid/commitlint-github-action@v6.0.2
+     with:
+       configFile: .commitlint.config.mjs
+       failOnErrors: false
 
     - name: Get changed files
       id: changed-files
