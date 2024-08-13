@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
 
@@ -35,8 +35,7 @@ jobs:
               "url": "https://maven.pkg.github.com/aboveproperty/*"
             }
           ]
-        servers: >
-          [{
+        servers: '[{
             "id": "github-packages",
             "username": "${{ secrets.GH_USERNAME }}",
             "password": "${{ secrets.GH_PASSWORD }}"
@@ -48,7 +47,7 @@ jobs:
             "id": "github",
             "username": "${{ github.actor }}",
             "password": "${{ secrets.GITHUB_TOKEN }}"
-          }]
+          }]'
         mirrors: >
           [
             {
@@ -71,16 +70,16 @@ jobs:
           ${{ runner.os }}-m2-dependencies-core-modules-${{ hashFiles('**/pom.xml') }}
           ${{ runner.os }}-m2-dependencies-core-modules-
 
-    - name: Install Commitlint Dependencies
-      id: dependencies
-      run: npm install @commitlint/config-conventional
+    #- name: Install Commitlint Dependencies
+    #  id: dependencies
+    #  run: npm install @commitlint/config-conventional
 
-    - name: Lint commit messages
-      id: commitlint
-      uses: wagoid/commitlint-github-action@v6.0.2
-      with:
-        configFile: .commitlint.config.mjs
-        failOnErrors: false
+    #- name: Lint commit messages
+    #  id: commitlint
+    #  uses: wagoid/commitlint-github-action@v5
+    #  with:
+    #    configFile: .commitlint.config.js
+    #    failOnErrors: false
 
     - name: Get changed files
       id: changed-files
