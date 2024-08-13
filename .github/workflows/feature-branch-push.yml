@@ -83,7 +83,7 @@ jobs:
 
     - name: Get changed files
       id: changed-files
-      uses: tj-actions/changed-files@v29.0.4
+      uses: tj-actions/changed-files@v44.5.7
 
     #- name: Check for copyright
     #  id: check_boilerplate
