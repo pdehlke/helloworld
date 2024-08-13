@@ -2,7 +2,7 @@ name: "Run commitlint"
 on:
   pull_request:
     branches:
-      - [ master, main, develop ]
+      - [ 'master', 'main', 'develop' ]
     types: ['opened', 'edited', 'reopened', 'synchronize']
   push:
     branches: [ feature/* ]
